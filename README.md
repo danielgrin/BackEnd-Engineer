@@ -48,11 +48,11 @@ Summary of analytics for a single analytic type, as measured for properties filt
 
 --
 
-NB: As mentioned below this is a literal and niave implementation of the requirements, so as far as complete API goes, a lot of routes are clearly missing.
+NB: As mentioned below this is a literal and niave implementation of the requirements, so as far as complete API goes, many routes are missing.
 
 
 ### Query filters and Collisions
-Filtering of properties by suburb/state/country is available using URL queries. As far as the API design goes, I'd suggest our main endpoints (as concrete nouns / resources) should be _properties_ and _analytics_. Location fields can be thought of as attributes, so treating them as filters seems appropriate here. In my opinion, good API endpoints should only deal with concrete things and actions that can be done on them. Attributes are optional.
+Filtering of properties by suburb/state/country is available using URL queries. As far as API design goes, I'd suggest our main endpoints (as concrete nouns / resources) should be _properties_ and _analytics_. Location fields can be thought of as attributes, so treating them as filters seems appropriate here. In my opinion, good API endpoints should only deal with concrete things and actions that can be done on them. Attributes are optional.
 
 If we were working with global property data, we will almost certainly find collisions with the suburb attribute, and in theory the state attribute also. We should enforce the use of all three criteria when requesting filtered properties, i.e a request for properties in a suburb must include state and country.
 
@@ -66,9 +66,9 @@ We could enforce this using multiple cascading routes however our endpoints are 
 ### Test Time
 This test ended up taking significantly more time than anticipated. Time to think through the problem domain to identify edge-cases and consider different approaches to the business requirements, time setup the development environment, to set up migrations and massage the data for import (i.e cleaning up the spreadsheet for auto-seeding...), to setup architecture and routes, to test and debug... during the normal course of development all of these can expose unforseen design constraints, gotchas and technology issues, which can stretch what otherwise might seem a simple task.
 
-Taking a good few hours to do each task properly, and because the test is somewhat open ended regarding features that would normally be used in a production app (eg. authenticaion, logging, analytics, validation etc.), time to complete can increase significantly. Consequently, a number of tasks that would usually be done to bring the application up to production standard have not been implemented.
+Taking a good few hours to do each task properly, and because the test is somewhat open ended regarding features that would normally be used in a production app (eg. authenticaion, logging, analytics, validation etc.), time to complete can increase significantly. Consequently, a number of tasks that would usually be done to bring the application up to production standard have not been completed.
 
-In my opinion, as the Laravel documentation is very good indeed, an experienced developer could easily learn it on the job. This means that a number of tasks only require grunt work to complete and may not offer much insight into skillset or experience.
+In my opinion, as the Laravel documentation is very good indeed, an experienced developer could easily learn it on the job. This means that many tasks only require grunt work to complete and may not offer much insight into skillset or experience.
 
 In my opinion, a measure of deeper knowledge might be better made by solving the core business problem, rather than focusing on the potentially step-by-step process of setting up a basic CRUD system using Laravel.
 
@@ -106,7 +106,7 @@ Having said that, here I have used _/analytic_types/analytics/summary_ as it bet
 
 
 ### Solution
-As far as I understand it, the most interesting question in this exercise is finding a good way to summarise analytics for a given set of properties. As usual there are a number of approachesavailable here, each with advantages and trade-offs. Most important decisions in software development are about identifying acceptable tradeoffs, -balancing business needs with optimal code-craft, simplicity with performance. Clarity for power.
+As far as I understand it, the most interesting question in this exercise is finding a good way to summarise analytics for a given set of properties. As usual there are a number of approaches available here, each with advantages and trade-offs. Most important decisions in software development are about identifying acceptable tradeoffs, -balancing business needs with optimal code-craft, simplicity with performance. Clarity for power.
 
 One approach here would be to do as much work as possible using the framework, which gives the advantage of cleaner and more standardised code and architecture. With a good framework (like Laravel) we can often deliver business requirements more rapidly this way. Here, we might use the ORM to fetch each analytic type one by one and summarise the values using the aggregate and collection functions built into Laravel. 
 
@@ -125,7 +125,7 @@ With an initial, testable prototype we could now plan a longer term development 
 So, in answer to the question of a good way to summarise analytics... as is very often the case, it depends.
 
 ## Caching and Preprocessing
-It's unlikely that we are going to want to run the same processing code for each request, so at scale, some sort of caching strategy should be considered. This could be as simple as using the built in caching features in Laravel or setting up a dedicated caching layer as part of our server stack -perhaps as a distributed cluster of key-value databases (e.g Redis). We might also consider using a cloud based service such as IronCache or AWS ElasticCache so that auto-scaling and regional distribution is handled for us.
+It's unlikely that we are going to want to run the same processing code for each request, so at scale, some sort of caching strategy should be considered. This could be as simple as using the built in caching features in Laravel or setting up a dedicated caching layer as part of our server stack -perhaps as a distributed cluster of key-value databases (e.g Redis). We might also consider using a cloud based service such as IronCache or AWS ElasticCache so that scaling and regional distribution is handled for us.
 
 Additionally, we would look into data preprocessing. As new data arrives, throwing it into a queue and spinning up a cluster of worker instances to crunch and store the results in a dedicated summaries table and/or in the cache. We might consider using server-less infrastructure such as AWS Lambda, to give us a theoretically infinite processes to handle data as it arrives. As another example, we could build stand-alone processing modules in a lower level language that supports concurrency (e.g GoLang), to increase processing efficiency even more.
 
